@@ -1,0 +1,48 @@
+{
+    "name": "@uniformdev/habitat-site-next",
+    "version": "7.3.230626-1",
+    "publishConfig": {
+        "registry": "https://uniform.dev/no-matter-what-url/"
+    },
+    "private": true,
+    "license": "SEE LICENSE IN PROVIDED DISTRIBUTION PACKAGE",
+    "scripts": {
+        "dev": "cross-env-shell \"npm run start-server\"",
+        "start": "cross-env-shell NODE_ENV=production \"npm run build && npm run start-server\"",
+        "start-server": "node ./server.js",
+        "export": "cross-env-shell NODE_ENV=production UNIFORM_BUILD_MODE=export \"npm run build && next export\"",
+        "export:esi": "cross-env-shell NODE_ENV=production UNIFORM_BUILD_MODE=export UNIFORM_SITES_HABITAT_PRESENTATION_MODE=mvc UNIFORM_OPTIONS_ESI=1 \"npm run build && next export && npm run decode-esi\"",
+        "decode-esi": "node ./scripts/decode-esi.js ./out",
+        "traefik": "node ../../scripts/monorepo/traefik.js habitat-uniform__DNS_SUFFIX__ 3000 3009",
+        "build": "del-cli .next && next build",
+        "format": "prettier --write \"./{components,pages}/**/*.{js,ts,tsx}\"",
+        "bundle:theming": "npx uglify-js ./public/scripts/Sitecore.Foundation.Theming.js -o ./public/scripts/Sitecore.Foundation.Theming.min.js --compress --mangle --comments --source-map",
+        "copy-extra-files": "mkdirp public\\scripts && del-cli public\\scripts\\uniform.optimize.min.js && ncp ..\\..\\packages\\optimize-js\\dist\\uniform.optimize.min.js public\\scripts\\uniform.optimize.min.js && mkdirp scripts && del-cli scripts\\decode-esi.js && ncp ..\\..\\kits\\optimize-sitecore-mvc-nextjs-starterkit\\scripts\\decode-esi.js scripts\\decode-esi.js && mkdirp cloudflare-worker && ncp ..\\..\\scripts\\cloudflare-worker cloudflare-worker",
+        "cloudflare:deploy-worker": "node ../../scripts/cloudflare-worker-fetch/deploy-worker.js"
+    },
+    "dependencies": {
+        "@uniformdev/common": "7.3.230626-1",
+        "@uniformdev/common-client": "7.3.230626-1",
+        "@uniformdev/common-server": "7.3.230626-1",
+        "@uniformdev/esi-edge-cloudflare": "7.3.230626-1",
+        "@uniformdev/next": "7.3.230626-1",
+        "@uniformdev/next-server": "7.3.230626-1",
+        "@uniformdev/publishing-all": "7.3.230626-1",
+        "dotenv": "^8.2.0",
+        "next": "13.0.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@types/dotenv": "^8.2.0",
+        "@types/react": "^18.0.25",
+        "@types/react-dom": "^18.0.9",
+        "cross-env": "^7.0.2",
+        "del-cli": "4.0.1",
+        "get-port": "^5.1.1",
+        "mkdirp": "^1.0.4",
+        "ncp": "^2.0.0",
+        "typescript": "^4.5.5",
+        "replace-in-file": "^6.2.0"
+    }
+}
